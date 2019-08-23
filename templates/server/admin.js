@@ -9,7 +9,7 @@ module.exports = ({ stylesheetTag, baseURL }) => `
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="${baseURL}"/>
-    <title>Auth0 Account Linking Extension Administrator</title>
+    <title>Auth0 OTP Extension Administrator</title>
     <link rel="stylesheet" href="https://cdn.auth0.com/styleguide/core/2.0.5/core.min.css" />
     <link rel="stylesheet" href="https://cdn.auth0.com/styleguide/components/2.0.0/components.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.31.0/codemirror.min.css">

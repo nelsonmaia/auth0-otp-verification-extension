@@ -1,7 +1,7 @@
 {
-  "name": "auth0-account-link-extension",
+  "name": "auth0-otp-extension",
   "version": "2.3.4",
-  "description": "Auth0 Account Link Extension",
+  "description": "Auth0 OTP Verification",
   "main": "index.js",
   "engines": {
     "node": ">=6.9"
