@@ -1,0 +1,16 @@
+node_modules
+.idea
+.DS_Store
+.nyc_output
+server/config.json
+server/config.test.json
+coverage
+.env
+dist/*
+!dist/.gitkeep
+tags
+TAGS
+data.json
+*.swp
+yarn-error.log
+secrets
