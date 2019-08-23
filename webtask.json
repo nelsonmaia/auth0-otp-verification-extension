@@ -1,9 +1,9 @@
 {
   "title": "Auth0 OTP Verification",
   "name": "otp-verification",
-  "version": "2.4.5",
+  "version": "2.5.5",
   "preVersion": "2.1.1",
-  "author": "auth0",
+  "author": "nelson.matias",
   "description":
     "This extension gives Auth0 customers the ability to allow their users to link their accounts",
   "type": "application",

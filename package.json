@@ -1,6 +1,6 @@
 {
   "name": "auth0-otp-extension",
-  "version": "2.3.4",
+  "version": "2.5.4",
   "description": "Auth0 OTP Verification",
   "main": "index.js",
   "engines": {
@@ -16,7 +16,7 @@
     "extension:build": "a0-ext build:server ./webtask.js ./dist && cp ./dist/auth0-account-link.extension.$npm_package_version.js ./build/bundle.js",
     "build": "yarn run client:build && yarn run extension:build"
   },
-  "author": "Auth0",
+  "author": "nelson.matias",
   "license": "MIT",
   "auth0-extension": {
     "nodeTarget": "4.2.0",
