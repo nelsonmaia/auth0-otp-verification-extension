@@ -1,6 +1,6 @@
 {
   "name": "auth0-otp-extension",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auth0 OTP Verification",
   "main": "index.js",
   "engines": {
