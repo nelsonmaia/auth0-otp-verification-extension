@@ -1,6 +1,6 @@
 {
   "title": "Auth0 OTP Verification",
-  "name": "otp-verification",
+  "name": "auth0-otp-extension",
   "version": "0.1.1",
   "preVersion": "0.1.0",
   "useHashName": false,
