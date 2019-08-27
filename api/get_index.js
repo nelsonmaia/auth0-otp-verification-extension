@@ -20,10 +20,6 @@ const decodeToken = token =>
 
 const fetchUsersFromToken = ({ sub, email }) =>
 
-
-console.log("============ it is here ============");
-logger.error("======= its herer ==============");
-
   findUsersByEmail(email).then(users => ({
     currentUser: users.find(u => u.user_id === sub),
     matchingUsers: users.filter(u => u.user_id !== sub)
