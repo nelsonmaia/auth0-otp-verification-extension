@@ -1,8 +1,9 @@
 {
   "title": "Auth0 OTP Verification",
   "name": "otp-verification",
-  "version": "2.5.5",
-  "preVersion": "2.1.1",
+  "version": "2.6.5",
+  "preVersion": "2.5.5",
+  "useHashName": false,
   "author": "nelson.matias",
   "description":
     "This extension gives Auth0 customers the ability to allow their users to link their accounts",
@@ -10,7 +11,7 @@
   "logoUrl": "https://cdn.auth0.com/extensions/auth0-authz/assets/logo.svg",
   "docsUrl": "https://auth0.com/docs/extensions/account-link",
   "initialUrlPath": "/login",
-  "repository": "https://github.com/auth0-extensions/auth0-account-link-extension",
+  "repository": "https://github.com/nelsonmaia/auth0-otp-verification-extension",
   "keywords": ["auth0", "extension", "account-link"],
   "secrets": {
     "CUSTOM_CSS": {
