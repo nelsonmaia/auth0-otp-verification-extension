@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "serve:dev": "gulp run",
     "client:build": "minify --clean public/css/link.css && minify --clean public/css/admin.css",
-    "extension:build": "a0-ext build:server ./webtask.js ./dist && cp ./dist/auth0-account-link.extension.$npm_package_version.js ./build/bundle.js",
+    "extension:build": "a0-ext build:server ./webtask.js ./dist && cp ./dist/otp-verification.extension.$npm_package_version.js ./build/bundle.js",
     "build": "yarn run client:build && yarn run extension:build"
   },
   "author": "nelson.matias",
