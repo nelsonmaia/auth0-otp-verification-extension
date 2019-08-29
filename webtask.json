@@ -4,7 +4,6 @@
   "version": "0.2.0",
   "preVersion": "0.1.0",
   "author": "nelson.matias",
-  "useHashName": false,
   "description":
     "This extension gives Auth0 customers the ability to allow their users to link their accounts",
   "type": "application",
