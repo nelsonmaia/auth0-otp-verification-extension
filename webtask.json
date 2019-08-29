@@ -1,7 +1,7 @@
 {
   "title": "Auth0 OTP Verification",
   "name": "auth0-otp-verification-extension",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "preVersion": "0.1.0",
   "author": "nelson.matias",
   "description":
