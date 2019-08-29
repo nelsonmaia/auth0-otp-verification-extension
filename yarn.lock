@@ -5145,9 +5145,10 @@ netmask@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
 
-ngrok@^2.2.15:
+ngrok@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/ngrok/-/ngrok-2.3.0.tgz#c016b3277a14ff18e5beb64904adb35be72f99b2"
+  integrity sha512-zRzeTtdwx2tjeeT/GbOdZk8dUR3S3yOW3W+VwkRF4wpCajbP/8u3I3jlP0HyHoiPLb/zpT2PsgqFxM+K9cfclA==
   dependencies:
     "@types/node" "^8.0.19"
     async "^2.3.0"
