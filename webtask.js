@@ -3,6 +3,8 @@ const hapiApp = require('./server/init');
 const logger = require('./lib/logger');
 const config = require('./lib/config');
 
+logger.info('it is starting');
+
 const createServer = tools.createServer((wtConfig, wtStorage) => {
   logger.info('Starting Account Link Extension - Version:', process.env.CLIENT_VERSION);
   logger.info(' > WT_URL:', wtConfig('WT_URL'));
