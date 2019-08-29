@@ -26,7 +26,7 @@ const fetchUsersFromToken = ({ sub, email }) =>
   }));
 
 module.exports = () => ({
-  method: 'GET',
+  method: 'GET', 
   path: '/',
   config: {
     auth: false
