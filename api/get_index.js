@@ -8,6 +8,8 @@ const getIdentityProviderPublicName = require('../lib/idProviders');
 const humanizeArray = require('../lib/humanize');
 const { resolveLocale } = require('../lib/locale');
 const { getSettings } = require('../lib/storage');
+const util = require('util');
+
 
 const decodeToken = token =>
   new Promise((resolve, reject) => {
@@ -31,8 +33,11 @@ module.exports = () => ({
     auth: false
   },
   handler: (req, reply) => {
+    console.log("inside the handler");
     const linkingState = req.state['account-linking-admin-state'];
+    console.log("Linking state", linkingState);
     if (typeof linkingState !== 'undefined' && linkingState !== '') {
+      console.log("Redirecting to adm");
       reply.redirect(`${config('PUBLIC_WT_URL')}/admin`).state('account-linking-admin-state', '');
       return;
     }
@@ -48,10 +53,16 @@ module.exports = () => ({
     if (req.query.title) dynamicSettings.title = req.query.title;
     if (req.query.logoPath) dynamicSettings.logoPath = req.query.logoPath;
 
+    
+
     decodeToken(req.query.child_token)
       .then((token) => {
+
         fetchUsersFromToken(token)
           .then(({ currentUser, matchingUsers }) => {
+
+            console.log("current user", currentUser);
+
             getSettings().then((settings) => {
               const userMetadata = (matchingUsers[0] && matchingUsers[0].user_metadata) || {};
               const locale = userMetadata.locale || settings.locale;
@@ -79,17 +90,19 @@ module.exports = () => ({
           .catch((err) => {
             const state = req.query.state;
             logger.error('An error was encountered: ', err);
+            console.log("is this the error is it here?", util.inspect(err, {depth: null}));
             logger.info(
               `Redirecting to failed link to /continue: ${token.iss}continue?state=${
                 req.query.state
-              }`
+              }&error=${err}`
             );
 
-            reply.redirect(`${token.iss}continue?state=${state}`);
+            reply.redirect(`${token.iss}continue?state=${state}&error=${err}&msg=${util.inspect(err, {depth: null})}`);
           });
       })
       .catch((err) => {
         logger.error('An invalid token was provided', err);
+        console.log('An invalid token was provided', err);
 
         indexTemplate({
           dynamicSettings,

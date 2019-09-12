@@ -9,8 +9,10 @@ const defaultCallback = (err) => {
   if (err) {
     logger.error('Hapi initialization failed.');
     logger.error(err);
+    console.log('Hapi initialization failed.');
   } else {
     logger.info('Hapi initialization completed.');
+    console.log('Hapi initialization completed.');
   }
 };
 

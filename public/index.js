@@ -33,6 +33,8 @@ module.exports = function(currentUser, matchingUsers) {
         })
         .join('&');
 
+        console.log("This is inside the logoin - backend or not", domain, query);
+
       window.location = domain + 'authorize?' + query;
     };
 
@@ -40,19 +42,29 @@ module.exports = function(currentUser, matchingUsers) {
       linkEl.href = domain + 'continue?state=' + state;
     };
 
+    var options = {
+      client_id: params.client_id,
+      redirect_uri: params.redirect_uri,
+      response_type: params.response_type,
+      scope: params.scope,
+      state: params.original_state,
+      nonce: params.nonce,
+      audience: params.audience,
+      link_account_token: params.child_token,
+      prevent_sign_up: true,
+      prompt: "login",
+      login_hint:"sms"
+      
+    }
+
+    console.log("CONNECTIONS 0", connections[0], options);
+
+    if(connections[0] !== 'sms'){
+      options.connection = connections[0];
+    }
+
     linkEl.addEventListener('click', function(e) {
-      authorize(token.iss, {
-        client_id: params.client_id,
-        redirect_uri: params.redirect_uri,
-        response_type: params.response_type,
-        scope: params.scope,
-        state: params.original_state,
-        nonce: params.nonce,
-        audience: params.audience,
-        link_account_token: params.child_token,
-        prevent_sign_up: true,
-        connection: connections[0]
-      });
+      authorize(token.iss, options);
     });
 
     updateContinueUrl(skipEl, token.iss, params.state);
