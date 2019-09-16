@@ -90,6 +90,7 @@ module.exports = () => ({
                 const humanizedIdentities = humanizeArray(identities, t('or'));
 
                 getUserFromToken(token).then(currentUser => {
+                  console.log("After search", currentUser);
                   reply(
                     indexTemplate({
                       dynamicSettings,
