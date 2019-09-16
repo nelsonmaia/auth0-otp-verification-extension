@@ -107,24 +107,37 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
 
     return verifyToken(secondAccountToken, config.token.clientSecret)
       .then(function(decodedToken) {
-        // Redirect early if tokens are mismatched
-        // TODO
-        // if (user.email !== decodedToken.email) {
-        //   console.error(LOG_TAG, 'User: ', decodedToken.email, 'tried to link to account ', user.email);
-        //   context.redirect = {
-        //     url: buildRedirectUrl(secondAccountToken, context.request.query, 'accountMismatch')
-        //   };
+       
+        // TODO verification on the backend that phone number matches from original and current account
 
-        //   return user;
-        // }
-
-        //var linkUri = config.endpoints.userApi+'/'+user.user_id+'/identities';
         var linkUri = config.endpoints.userApi+'/'+decodedToken.sub+'/identities';
         var headers = {
           Authorization: 'Bearer ' + auth0.accessToken,
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache'
         };
+
+        var newApp_metadata = decodedToken.app_metadata || {};
+             newApp_metadata.isVerified = true;
+
+            //  auth0.users.updateAppMetadata(decodedToken.sub, newApp_metadata).then(() =>{
+            //   context.primaryUser = decodedToken.sub;
+            //   return _;
+  
+            //  });
+
+            var ManagementClient = require('auth0@2.9.1').ManagementClient;
+              var management = new ManagementClient({
+                domain: auth0.domain,
+                token: auth0.accessToken
+              });
+
+              var userPayload = {
+                //   phone_number: user.phone_number,
+                   app_metadata: newApp_metadata
+                 };
+   
+
 
         return apiCall({
           method: 'GET',
@@ -145,11 +158,24 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
               json: { user_id: user.user_id, provider: provider }
             });
           })
-          .then(function(_) {
-            // TODO: Ask about this
-            console.info(LOG_TAG, 'Successfully linked accounts for user: ', user.email);
-            context.primaryUser = decodedToken.sub;
-            return _;
+          .then(
+             
+              management.updateUser({ id: decodedToken.sub }, userPayload, function (err, user) {
+                if (err) {
+                  console.log("err", err);
+                 throw err;
+                }
+              
+                // Updated user.
+                console.log(user);
+                context.primaryUser = decodedToken.sub;
+                return _;
+              })
+
+
+            
+          ).catch(err => {
+            throw err;
           });
       });
   }
@@ -169,7 +195,8 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   function promptUser() {
 
     if(isVerifiedUser()){
-      return false;
+      console.log("Is verified");
+      return Promise.resolve();
     }    
 
     return searchUsersWithSamePhone().then(function transformUsers(users) {
