@@ -10,4 +10,5 @@ module.exports = (currentUser, matchingUsers) => `
 
   bootstrapApp(currentUser, matchingUsers);
 </script>
+
 `;

@@ -12,7 +12,6 @@ module.exports = `
     {{ CustomCSS }}
   </head>
   <body>
-    
     {{ Auth0Widget }}
     {{ ExtensionScripts }}
   </body>

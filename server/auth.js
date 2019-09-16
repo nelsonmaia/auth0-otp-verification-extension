@@ -39,11 +39,15 @@ module.exports.register = (server, options, next) => {
     complete: true,
 
     verifyFunc: (decoded, req, callback) => {
+      console.log("header is", header);
+
       if (!decoded) {
         return callback(null, false);
       }
 
       const header = req.headers.authorization;
+
+     
       if (header && header.indexOf('Bearer ') === 0) {
         const token = header.split(' ')[1];
         if (

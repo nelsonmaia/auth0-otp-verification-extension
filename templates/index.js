@@ -4,6 +4,7 @@ const getStorage = require('../lib/db').get;
 const buildAuth0Widget = require('./utils/auth0widget');
 const buildExtensionScripts = require('./utils/extensionScripts');
 
+
 const VAR_REGEX = /\{\{\s*(.*?)\s*\}\}/g;
 const render = (template, locals = {}) => {
   if (!template || typeof template !== 'string') {
@@ -22,6 +23,7 @@ module.exports = ({
 
       return render(template, {
         ExtensionCSS: stylesheetTag,
+        EmbeededCss: "buildExtensionCSS",
         CustomCSS: customCSSTag,
         Auth0Widget: widget,
         ExtensionScripts: buildExtensionScripts(currentUser, matchingUsers)

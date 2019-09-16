@@ -20,7 +20,7 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
     endpoints: {
       linking: '${extensionURL.replace(/\/$/g, '')}',
       userApi: auth0.baseUrl + '/users',
-      usersByEmailApi: auth0.baseUrl + '/users-by-email'
+      usersByEmailApi: auth0.baseUrl + '/users'
     },
     token: {
       clientId: '${clientID}',
@@ -28,18 +28,15 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
       issuer: auth0.domain
     }
   };
-  // If the user does not have an e-mail account, TEST MY RULE
-  // just continue the authentication flow.
-  // See auth0-extensions/auth0-account-link-extension#33
-  // 
-   console.log(LOG_TAG, 'Verifying user email', user.email);
-  // if (user.email === undefined) {
-  //   return callback(null, user, context);
-  // }
-
+  
   createStrategy().then(callbackWithSuccess).catch(callbackWithFailure);
 
   function createStrategy() {
+
+    if(context.connection === "sms" && !shouldLink() ){
+      return callback(new Error("Login not supported for SMS"));
+    }
+
     if (shouldLink()) { 
       return linkAccounts();
     } else if (shouldPrompt()) {
@@ -106,6 +103,8 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   function linkAccounts() {
     var secondAccountToken = context.request.query.link_account_token;
 
+    console.log("Second account to be link", secondAccountToken);
+
     return verifyToken(secondAccountToken, config.token.clientSecret)
       .then(function(decodedToken) {
         // Redirect early if tokens are mismatched
@@ -159,11 +158,21 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
     return Promise.resolve();
   }
 
-  function promptUser() {
-    return searchUsersWithSameEmail().then(function transformUsers(users) {
-      
-console.log("users found", users);
+  function isVerifiedUser(){
+    console.log("Is verified user", user.app_metadata);
+    if(!user.app_metadata || user.app_metadata.isVerified !== true){
+      return false;
+    }
+    return true;
+  }
 
+  function promptUser() {
+
+    if(isVerifiedUser()){
+      return false;
+    }    
+
+    return searchUsersWithSamePhone().then(function transformUsers(users) {
 
       return users.filter(function(u) {
         return u.user_id !== user.user_id;
@@ -180,12 +189,13 @@ console.log("users found", users);
     }).then(function redirectToExtension(targetUsers) {
       console.log("target users before function", targetUsers);
       console.log("context.query", context.request.query);
-      if (targetUsers.length > 0) {
+      console.log("target users", targetUsers);
+     // if (targetUsers.length > 0) {
         context.redirect = {
           // url: buildRedirectUrl(createToken(config.token), targetUsers)
            url: buildRedirectUrl(createToken(config.token), context.request.query)
         };
-      }
+     // }
     });
   }
 
@@ -217,7 +227,8 @@ console.log("users found", users);
     var userSub = {
       sub: user.user_id,
       email: user.email,
-      base: auth0.baseUrl
+      base: auth0.baseUrl,
+      phone_number : user.phone_number
     };
 
     console.log("user sub", userSub);
@@ -225,11 +236,12 @@ console.log("users found", users);
     return jwt.sign(userSub, tokenInfo.clientSecret, options);
   }
 
-  function searchUsersWithSameEmail() {
+  function searchUsersWithSamePhone() {
+    var phoneNumberSearch = 'phone_number:"'+user.phone_number+'"';
     return apiCall({
       method: 'GET',
       url: config.endpoints.usersByEmailApi,
-      qs: {q: 'phone_number:"+447468341388"', search_engine: 'v3'}
+      qs: {q: phoneNumberSearch, search_engine: 'v3'}
     });
   }
 

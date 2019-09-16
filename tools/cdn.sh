@@ -1,5 +1,5 @@
 CURRENT_VERSION=$(node tools/attribute.js version)
-EXTENSION_NAME="auth0-account-link-extension-otp-v2"
+EXTENSION_NAME="auth0-otp-verification-extension"
 
 CDN_EXISTS=$(aws s3 ls s3://assets.us.auth0.com/css/$EXTENSION_NAME/$CURRENT_VERSION/ | grep "link.min.css")
 ADMIN_CDN_EXISTS=$(aws s3 ls s3://assets.us.auth0.com/css/$EXTENSION_NAME/$CURRENT_VERSION/ | grep "admin.min.css")

@@ -17,6 +17,8 @@ const register = (server, options, next) => {
     )
   });
 
+  console.log("Handler finished");
+
   next();
 };
 

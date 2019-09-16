@@ -53,8 +53,8 @@ module.exports = function(currentUser, matchingUsers) {
       link_account_token: params.child_token,
       prevent_sign_up: true,
       prompt: "login",
-      login_hint:"sms"
-      
+      login_hint:"sms",
+      login_humber: currentUser.phone_number
     }
 
     console.log("CONNECTIONS 0", connections[0], options);

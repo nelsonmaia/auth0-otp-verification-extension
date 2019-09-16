@@ -1,6 +1,8 @@
 const { decode } = require('jsonwebtoken');
 const config = require('../lib/config');
 const findUsersByEmail = require('../lib/findUsersByEmail');
+const findUsersByPhone = require('../lib/findUsersByPhone');
+const getUser = require('../lib/getUser');
 const indexTemplate = require('../templates/index');
 const logger = require('../lib/logger');
 const stylesheet = require('../lib/stylesheet');
@@ -20,11 +22,18 @@ const decodeToken = token =>
     }
   });
 
-const fetchUsersFromToken = ({ sub, email }) =>
-  findUsersByEmail(email).then(users => ({
+const fetchUsersFromToken = ({ sub, phone_number }) =>
+findUsersByPhone(phone_number).then(users => ({
     currentUser: users.find(u => u.user_id === sub),
     matchingUsers: users.filter(u => u.user_id !== sub)
   }));
+
+  const getUserFromToken = ({sub}) => {
+    return getUser(sub).then( (users) => {
+      console.log("it is here", users);
+      return users;
+    });
+  };
 
 module.exports = () => ({
   method: 'GET',
@@ -53,15 +62,22 @@ module.exports = () => ({
     if (req.query.title) dynamicSettings.title = req.query.title;
     if (req.query.logoPath) dynamicSettings.logoPath = req.query.logoPath;
 
-    
+    console.log("req.query.child_token", req.query.child_token);
 
     decodeToken(req.query.child_token)
       .then((token) => {
 
         fetchUsersFromToken(token)
-          .then(({ currentUser, matchingUsers }) => {
+          .then(({currentUser, matchingUsers }) => {
 
-            console.log("current user", currentUser);
+            // console.log("current user before check", currentUser);
+
+            // if(!currentUser){
+            //   var x =  await getUserFromToken(token);
+            //   currentUser =  x;
+            // }
+
+            // console.log("current user", currentUser);
 
             getSettings().then((settings) => {
               const userMetadata = (matchingUsers[0] && matchingUsers[0].user_metadata) || {};
@@ -73,17 +89,21 @@ module.exports = () => ({
                   .map(getIdentityProviderPublicName);
                 const humanizedIdentities = humanizeArray(identities, t('or'));
 
-                reply(
-                  indexTemplate({
-                    dynamicSettings,
-                    stylesheetTag,
-                    currentUser,
-                    matchingUsers,
-                    customCSSTag,
-                    locale,
-                    identities: humanizedIdentities
-                  })
-                );
+                getUserFromToken(token).then(currentUser => {
+                  reply(
+                    indexTemplate({
+                      dynamicSettings,
+                      stylesheetTag,
+                      currentUser,
+                      matchingUsers,
+                      customCSSTag,
+                      locale,
+                      identities: humanizedIdentities
+                    })
+                  );
+                })
+
+                
               });
             });
           })
