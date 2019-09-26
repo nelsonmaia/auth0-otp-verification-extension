@@ -54,7 +54,7 @@ module.exports = function(currentUser, matchingUsers) {
       prevent_sign_up: true,
       prompt: "login",
       login_hint:"sms",
-      login_humber: currentUser.phone_number
+      login_number: currentUser.user_metadata.mobileNumber
     }
 
     console.log("CONNECTIONS 0", connections[0], options);
