@@ -49,14 +49,21 @@ module.exports = function(currentUser, matchingUsers) {
     const PNF = require("google-libphonenumber").PhoneNumberFormat;
     // Get an instance of `PhoneNumberUtil`.
     const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
-    const number = phoneUtil.parseAndKeepRawInput(
+    var number = phoneUtil.parseAndKeepRawInput(
       currentUser.user_metadata.mobileNumber,
       "ZA"
     );
-    const formattedNumber = phoneUtil
+    var formattedNumber = phoneUtil
       .format(number, PNF.NATIONAL)
       .split(" ")
       .join("");
+
+    console.log(
+      "Number format update " +
+        currentUser.user_metadata.mobileNumber +
+        " to " +
+        formattedNumber
+    );
 
     var options = {
       client_id: params.client_id,
