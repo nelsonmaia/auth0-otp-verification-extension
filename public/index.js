@@ -3,7 +3,9 @@
 // and eslint is configured to lint ES6.
 
 module.exports = function(currentUser, matchingUsers) {
-  var params = window.Qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  var params = window.Qs.parse(window.location.search, {
+    ignoreQueryPrefix: true
+  });
 
   try {
     loadLinkPage(window.jwt_decode(params.child_token));
@@ -13,8 +15,8 @@ module.exports = function(currentUser, matchingUsers) {
   }
 
   function loadLinkPage(token) {
-    var linkEl = document.getElementById('link');
-    var skipEl = document.getElementById('skip');
+    var linkEl = document.getElementById("link");
+    var skipEl = document.getElementById("skip");
     var connections = matchingUsers
       .reduce(function(acc, user) {
         return acc.concat(user.identities);
@@ -29,18 +31,32 @@ module.exports = function(currentUser, matchingUsers) {
           return !!qs[key];
         })
         .map(function(key) {
-          return key + '=' + encodeURIComponent(qs[key]);
+          return key + "=" + encodeURIComponent(qs[key]);
         })
-        .join('&');
+        .join("&");
 
-        console.log("This is inside the logoin - backend or not", domain, query);
+      console.log("This is inside the logoin - backend or not", domain, query);
 
-      window.location = domain + 'authorize?' + query;
+      window.location = domain + "authorize?" + query;
     };
 
     var updateContinueUrl = function(linkEl, domain, state) {
-      linkEl.href = domain + 'continue?state=' + state;
+      linkEl.href = domain + "continue?state=" + state;
     };
+
+    // format number for use with MFA widget
+    // Require `PhoneNumberFormat`.
+    const PNF = require("google-libphonenumber").PhoneNumberFormat;
+    // Get an instance of `PhoneNumberUtil`.
+    const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
+    const number = phoneUtil.parseAndKeepRawInput(
+      currentUser.user_metadata.mobileNumber,
+      "ZA"
+    );
+    const formattedNumber = phoneUtil
+      .format(number, PNF.NATIONAL)
+      .split(" ")
+      .join("");
 
     var options = {
       client_id: params.client_id,
@@ -53,39 +69,39 @@ module.exports = function(currentUser, matchingUsers) {
       link_account_token: params.child_token,
       prevent_sign_up: true,
       prompt: "login",
-      login_hint:"sms",
-      login_number: currentUser.user_metadata.mobileNumber
-    }
+      login_hint: "sms",
+      login_number: formattedNumber
+    };
 
     console.log("CONNECTIONS 0", connections[0], options);
 
-    if(connections[0] !== 'sms'){
+    if (connections[0] !== "sms") {
       options.connection = connections[0];
     }
 
-    linkEl.addEventListener('click', function(e) {
+    linkEl.addEventListener("click", function(e) {
       authorize(token.iss, options);
     });
 
     updateContinueUrl(skipEl, token.iss, params.state);
 
-    if (params.error_type === 'accountMismatch') {
+    if (params.error_type === "accountMismatch") {
       loadAccountMismatchError();
     }
   }
 
   function loadInvalidTokenPage() {
-    var containerEl = document.getElementById('content-container');
-    var labelEl = document.getElementById('label-value');
-    var linkEl = document.getElementById('link');
+    var containerEl = document.getElementById("content-container");
+    var labelEl = document.getElementById("label-value");
+    var linkEl = document.getElementById("link");
 
-    containerEl.innerHTML = '';
+    containerEl.innerHTML = "";
     containerEl.appendChild(
-      el('div', {}, [
-        el('p', {}, [
+      el("div", {}, [
+        el("p", {}, [
           text(
             window.Auth0AccountLinkingExtension.locale.pageMismatchError ||
-              'You seem to have reached this page in error. Please try logging in again'
+              "You seem to have reached this page in error. Please try logging in again"
           )
         ])
       ])
@@ -95,13 +111,13 @@ module.exports = function(currentUser, matchingUsers) {
   }
 
   function loadAccountMismatchError() {
-    var messageEl = document.getElementById('error-message');
+    var messageEl = document.getElementById("error-message");
     var msg =
       window.Auth0AccountLinkingExtension.locale.sameEmailAddressError ||
-      'Accounts must have matching email addresses. Please try again.';
+      "Accounts must have matching email addresses. Please try again.";
 
     messageEl.innerHTML = msg;
-    messageEl.style.display = 'block';
+    messageEl.style.display = "block";
   }
 
   function el(tagName, attrs, childEls) {
@@ -136,4 +152,4 @@ module.exports = function(currentUser, matchingUsers) {
 
     return keys;
   }
-}
+};
