@@ -2,6 +2,9 @@
 // Ignoring this file since it has to be written in ES5
 // and eslint is configured to lint ES6.
 
+const PNF = require("google-libphonenumber").PhoneNumberFormat;
+const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
+
 module.exports = function(currentUser, matchingUsers) {
   var params = window.Qs.parse(window.location.search, {
     ignoreQueryPrefix: true
@@ -46,26 +49,26 @@ module.exports = function(currentUser, matchingUsers) {
 
     // format number for use with MFA widget
     // Require `PhoneNumberFormat`.
-    // const PNF = require("google-libphonenumber").PhoneNumberFormat;
-    // // Get an instance of `PhoneNumberUtil`.
-    // const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
-    // var number = phoneUtil.parseAndKeepRawInput(
-    //   currentUser.user_metadata.mobileNumber,
-    //   "ZA"
-    // );
-    // var formattedNumber = phoneUtil
-    //   .format(number, PNF.NATIONAL)
-    //   .split(" ")
-    //   .join("");
+   
+    // Get an instance of `PhoneNumberUtil`.
+    
+    var number = phoneUtil.parseAndKeepRawInput(
+      currentUser.user_metadata.mobileNumber,
+      "ZA"
+    );
+    var formattedNumber = phoneUtil
+      .format(number, PNF.NATIONAL)
+      .split(" ")
+      .join("");
 
-    // console.log(
-    //   "Number format update " +
-    //     currentUser.user_metadata.mobileNumber +
-    //     " to " +
-    //     formattedNumber
-    // );
+    console.log(
+      "Number format update " +
+        currentUser.user_metadata.mobileNumber +
+        " to " +
+        formattedNumber
+    );
 
-    var formattedNumber = currentUser.user_metadata.mobileNumber;
+    //var formattedNumber = currentUser.user_metadata.mobileNumber;
 
     var options = {
       client_id: params.client_id,
