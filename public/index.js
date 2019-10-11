@@ -2,8 +2,7 @@
 // Ignoring this file since it has to be written in ES5
 // and eslint is configured to lint ES6.
 
-const PNF = require("google-libphonenumber").PhoneNumberFormat;
-const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
+
 
 module.exports = function(currentUser, matchingUsers) {
   var params = window.Qs.parse(window.location.search, {
@@ -51,23 +50,7 @@ module.exports = function(currentUser, matchingUsers) {
     // Require `PhoneNumberFormat`.
    
     // Get an instance of `PhoneNumberUtil`.
-    
-    var number = phoneUtil.parseAndKeepRawInput(
-      currentUser.user_metadata.mobileNumber,
-      "ZA"
-    );
-    var formattedNumber = phoneUtil
-      .format(number, PNF.NATIONAL)
-      .split(" ")
-      .join("");
-
-    console.log(
-      "Number format update " +
-        currentUser.user_metadata.mobileNumber +
-        " to " +
-        formattedNumber
-    );
-
+   
     //var formattedNumber = currentUser.user_metadata.mobileNumber;
 
     var options = {
@@ -82,7 +65,7 @@ module.exports = function(currentUser, matchingUsers) {
       prevent_sign_up: true,
       prompt: "login",
       login_hint: "sms",
-      login_number: formattedNumber
+      login_number: currentUser.user_metadata.mobileNumber
     };
 
     console.log("CONNECTIONS 0", connections[0], options);

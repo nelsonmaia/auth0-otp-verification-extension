@@ -3,6 +3,7 @@ const getStorage = require('../lib/db').get;
 
 const buildAuth0Widget = require('./utils/auth0widget');
 const buildExtensionScripts = require('./utils/extensionScripts');
+const googlePhone = require("google-libphonenumber");
 
 
 const VAR_REGEX = /\{\{\s*(.*?)\s*\}\}/g;
@@ -20,6 +21,27 @@ module.exports = ({
   Promise.all([buildAuth0Widget(dynamicSettings, identities, locale), getStorage().read()])
     .then(([widget, data]) => {
       const template = data.settings ? data.settings.template : defaultTemplate;
+
+      const phoneUtil = googlePhone.PhoneNumberUtil.getInstance();
+      const PNF = googlePhone.PhoneNumberFormat;
+      var number = phoneUtil.parseAndKeepRawInput(
+        currentUser.user_metadata.mobileNumber,
+        "ZA"
+      );
+      var formattedNumber = phoneUtil
+        .format(number, PNF.NATIONAL)
+        .split(" ")
+        .join("");
+  
+      console.log(
+        "Number format update " +
+          currentUser.user_metadata.mobileNumber +
+          " to " +
+          formattedNumber
+      );
+
+      currentUser.user_metadata.mobileNumber = formattedNumber;
+  
 
       return render(template, {
         ExtensionCSS: stylesheetTag,
