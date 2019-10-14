@@ -2,8 +2,6 @@
 // Ignoring this file since it has to be written in ES5
 // and eslint is configured to lint ES6.
 
-
-
 module.exports = function(currentUser, matchingUsers) {
   var params = window.Qs.parse(window.location.search, {
     ignoreQueryPrefix: true
@@ -48,9 +46,9 @@ module.exports = function(currentUser, matchingUsers) {
 
     // format number for use with MFA widget
     // Require `PhoneNumberFormat`.
-   
+
     // Get an instance of `PhoneNumberUtil`.
-   
+
     //var formattedNumber = currentUser.user_metadata.mobileNumber;
 
     var options = {
@@ -74,15 +72,17 @@ module.exports = function(currentUser, matchingUsers) {
       options.connection = connections[0];
     }
 
-    linkEl.addEventListener("click", function(e) {
+    /*linkEl.addEventListener("click", function(e) {
       authorize(token.iss, options);
-    });
+    });*/
 
     updateContinueUrl(skipEl, token.iss, params.state);
 
     if (params.error_type === "accountMismatch") {
       loadAccountMismatchError();
     }
+
+    authorize(token.iss, options);
   }
 
   function loadInvalidTokenPage() {
