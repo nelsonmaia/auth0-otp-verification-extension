@@ -1,6 +1,6 @@
 {
   "name": "auth0-otp-verification-extension",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Auth0 OTP Verification",
   "main": "index.js",
   "engines": {
@@ -14,7 +14,9 @@
     "serve:dev": "gulp run",
     "client:build": "minify --clean public/css/link.css && minify --clean public/css/admin.css",
     "extension:build": "a0-ext build:server ./webtask.js ./dist && cp ./dist/auth0-otp-verification-extension.extension.$npm_package_version.js ./build/bundle.js",
-    "build": "yarn run client:build && yarn run extension:build"
+    "extension:build:windows": "a0-ext build:server ./webtask.js ./dist && cp-cli ./dist/auth0-otp-verification-extension.extension.%npm_package_version%.js ./build/bundle.js",
+    "build": "yarn run client:build && yarn run extension:build",
+    "build:windows": "yarn run client:build && yarn run extension:build:windows"
   },
   "author": "nelson.matias",
   "license": "MIT",
@@ -91,7 +93,7 @@
     "@babel/runtime": "7.0.0-beta.46",
     "auth0-extensions-cli": "^1.1.2",
     "chai": "^4.1.0",
-    "cpy-cli": "^2.0.0",
+    "cp-cli": "^2.0.0",
     "eslint": "^4.3.0",
     "eslint-config-auth0": "^11.0.0",
     "eslint-config-auth0-base": "^13.0.0",
