@@ -44,13 +44,6 @@ module.exports = function(currentUser, matchingUsers) {
       linkEl.href = domain + "continue?state=" + state;
     };
 
-    // format number for use with MFA widget
-    // Require `PhoneNumberFormat`.
-
-    // Get an instance of `PhoneNumberUtil`.
-
-    //var formattedNumber = currentUser.user_metadata.mobileNumber;
-
     var options = {
       client_id: params.client_id,
       redirect_uri: params.redirect_uri,
@@ -72,9 +65,9 @@ module.exports = function(currentUser, matchingUsers) {
       options.connection = connections[0];
     }
 
-    /*linkEl.addEventListener("click", function(e) {
+    linkEl.addEventListener("click", function(e) {
       authorize(token.iss, options);
-    });*/
+    });
 
     updateContinueUrl(skipEl, token.iss, params.state);
 
