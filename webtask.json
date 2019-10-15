@@ -1,7 +1,7 @@
 {
   "title": "Auth0 OTP Verification",
   "name": "auth0-otp-verification-extension",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "preVersion": "0.4.0",
   "author": "nelson.matias",
   "useHashName": false,
@@ -11,7 +11,11 @@
   "docsUrl": "https://auth0.com/docs/extensions/account-link",
   "initialUrlPath": "/login",
   "repository": "https://github.com/nelsonmaia/auth0-otp-verification-extension",
-  "keywords": ["auth0", "extension", "account-link"],
+  "keywords": [
+    "auth0",
+    "extension",
+    "account-link"
+  ],
   "secrets": {
     "CUSTOM_CSS": {
       "description": "Add custom styles to the linking page of the extension.",

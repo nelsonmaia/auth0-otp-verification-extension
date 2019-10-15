@@ -2,6 +2,8 @@
 // Ignoring this file since it has to be written in ES5
 // and eslint is configured to lint ES6.
 
+
+
 module.exports = function (currentUser, matchingUsers) {
   var params = window.Qs.parse(window.location.search, {
     ignoreQueryPrefix: true
@@ -10,11 +12,14 @@ module.exports = function (currentUser, matchingUsers) {
   try {
     loadLinkPage(window.jwt_decode(params.child_token));
   } catch (e) {
+    console.log('loadLinkPage failed');
+    console.log(params);
     console.error(e);
     loadInvalidTokenPage();
   }
 
   function loadLinkPage(token) {
+    console.log('loadLinkPage');
     var linkEl = document.getElementById("link");
     var skipEl = document.getElementById("skip");
     var connections = matchingUsers
@@ -35,7 +40,7 @@ module.exports = function (currentUser, matchingUsers) {
         })
         .join("&");
 
-      console.log("This is inside the logoin - backend or not", domain, query);
+      console.log("This is inside the log in - backend or not", domain, query);
 
       window.location = domain + "authorize?" + query;
     };
@@ -66,6 +71,7 @@ module.exports = function (currentUser, matchingUsers) {
     }
 
     linkEl.addEventListener("click", function (e) {
+      console.log('call authorize')
       authorize(token.iss, options);
     });
 
