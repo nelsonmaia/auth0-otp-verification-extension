@@ -2,7 +2,7 @@
 // Ignoring this file since it has to be written in ES5
 // and eslint is configured to lint ES6.
 
-module.exports = function(currentUser, matchingUsers) {
+module.exports = function (currentUser, matchingUsers) {
   var params = window.Qs.parse(window.location.search, {
     ignoreQueryPrefix: true
   });
@@ -18,19 +18,19 @@ module.exports = function(currentUser, matchingUsers) {
     var linkEl = document.getElementById("link");
     var skipEl = document.getElementById("skip");
     var connections = matchingUsers
-      .reduce(function(acc, user) {
+      .reduce(function (acc, user) {
         return acc.concat(user.identities);
       }, [])
-      .map(function(identity) {
+      .map(function (identity) {
         return identity.connection;
       });
 
-    var authorize = function(domain, qs) {
+    var authorize = function (domain, qs) {
       var query = keysForObject(qs)
-        .filter(function(key) {
+        .filter(function (key) {
           return !!qs[key];
         })
-        .map(function(key) {
+        .map(function (key) {
           return key + "=" + encodeURIComponent(qs[key]);
         })
         .join("&");
@@ -40,7 +40,7 @@ module.exports = function(currentUser, matchingUsers) {
       window.location = domain + "authorize?" + query;
     };
 
-    var updateContinueUrl = function(linkEl, domain, state) {
+    var updateContinueUrl = function (linkEl, domain, state) {
       linkEl.href = domain + "continue?state=" + state;
     };
 
@@ -65,7 +65,7 @@ module.exports = function(currentUser, matchingUsers) {
       options.connection = connections[0];
     }
 
-    linkEl.addEventListener("click", function(e) {
+    linkEl.addEventListener("click", function (e) {
       authorize(token.iss, options);
     });
 
@@ -74,8 +74,6 @@ module.exports = function(currentUser, matchingUsers) {
     if (params.error_type === "accountMismatch") {
       loadAccountMismatchError();
     }
-
-    authorize(token.iss, options);
   }
 
   function loadInvalidTokenPage() {
@@ -89,7 +87,7 @@ module.exports = function(currentUser, matchingUsers) {
         el("p", {}, [
           text(
             window.Auth0AccountLinkingExtension.locale.pageMismatchError ||
-              "You seem to have reached this page in error. Please try logging in again"
+            "You seem to have reached this page in error. Please try logging in again"
           )
         ])
       ])
