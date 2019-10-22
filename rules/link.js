@@ -167,9 +167,20 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
                 }
               
                 // Updated user.
-                console.log(user);
                 context.primaryUser = decodedToken.sub;
-                return _;
+                if (decodedUser.app_metadata && decodedUser.app_metadata.gcn){
+                  user.app_metadata.gcn = decodedUser.app_metadata.gcn;
+                  management.updateUser({ id: decodedToken.sub }, userPayload, function (err, updatedSmsUser) {
+                      if (err) {
+                        console.log("err", err);
+                       throw err;
+                      }
+                      return _;
+                    });
+              } else
+              {
+                  return _;
+              }
               })
 
 

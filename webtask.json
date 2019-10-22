@@ -1,8 +1,8 @@
 {
   "title": "Auth0 OTP Verification",
   "name": "auth0-otp-verification-extension",
-  "version": "1.4.0",
-  "preVersion": "0.4.0",
+  "version": "1.5.0",
+  "preVersion": "1.4.0",
   "author": "nelson.matias",
   "useHashName": false,
   "description": "This extension gives Auth0 customers the ability verify users phone number using passwordless login",
