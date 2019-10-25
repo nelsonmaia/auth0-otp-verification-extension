@@ -233,19 +233,29 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
 
           })
           .then(
-
-            management.updateUser({ id: decodedToken.sub }, userPayload, function (err, user) {
-              if (err) {
-                console.log("err", err);
-                throw err;
+             
+              management.updateUser({ id: decodedToken.sub }, userPayload, function (err, user) {
+                if (err) {
+                  console.log("err", err);
+                 throw err;
+                }
+              
+                // Updated user.
+                context.primaryUser = decodedToken.sub;
+                if (decodedUser.app_metadata && decodedUser.app_metadata.gcn){
+                  user.app_metadata.gcn = decodedUser.app_metadata.gcn;
+                  management.updateUser({ id: decodedToken.sub }, userPayload, function (err, updatedSmsUser) {
+                      if (err) {
+                        console.log("err", err);
+                       throw err;
+                      }
+                      return _;
+                    });
+              } else
+              {
+                  return _;
               }
-
-              // Updated user.
-              console.log(decodedToken.sub);
-              context.primaryUser = decodedToken.sub;
-              return _;
-            })
-
+              })
 
 
           ).catch(err => {

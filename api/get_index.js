@@ -22,18 +22,18 @@ const decodeToken = token =>
     }
   });
 
-const fetchUsersFromToken = ({ sub, phone_number }) =>
-findUsersByPhone(phone_number).then(users => ({
+const fetchUsersFromToken = ({ sub, phone_number, email }) =>
+  findUsersByPhoneAndEmail(phone_number, email).then(users => ({
     currentUser: users.find(u => u.user_id === sub),
     matchingUsers: users.filter(u => u.user_id !== sub)
   }));
 
-  const getUserFromToken = ({sub}) => {
-    return getUser(sub).then( (users) => {
-      console.log("it is here", users);
-      return users;
-    });
-  };
+const getUserFromToken = ({ sub }) => {
+  return getUser(sub).then((users) => {
+    console.log("it is here", users);
+    return users;
+  });
+};
 
 module.exports = () => ({
   method: 'GET',
@@ -67,8 +67,10 @@ module.exports = () => ({
     decodeToken(req.query.child_token)
       .then((token) => {
 
+        console.log('token: ' + token);
+
         fetchUsersFromToken(token)
-          .then(({currentUser, matchingUsers }) => {
+          .then(({ currentUser, matchingUsers }) => {
 
             // console.log("current user before check", currentUser);
 
@@ -104,21 +106,21 @@ module.exports = () => ({
                   );
                 })
 
-                
+
               });
             });
           })
           .catch((err) => {
             const state = req.query.state;
             logger.error('An error was encountered: ', err);
-            console.log("is this the error is it here?", util.inspect(err, {depth: null}));
+            console.log("is this the error is it here?", util.inspect(err, { depth: null }));
             logger.info(
               `Redirecting to failed link to /continue: ${token.iss}continue?state=${
-                req.query.state
+              req.query.state
               }&error=${err}`
             );
 
-            reply.redirect(`${token.iss}continue?state=${state}&error=${err}&msg=${util.inspect(err, {depth: null})}`);
+            reply.redirect(`${token.iss}continue?state=${state}&error=${err}&msg=${util.inspect(err, { depth: null })}`);
           });
       })
       .catch((err) => {
