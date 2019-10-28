@@ -45,7 +45,7 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   context.request.query = context.request.query || {};
   var config = {
     endpoints: {
-      linking: 'https://nmm.us8.webtask.io/auth0-otp-verification-extension',
+      linking: 'https://imsonline-stg.eu8.webtask.io/auth0-otp-verification-extension',
       userApi: auth0.baseUrl + '/users',
       usersByEmailApi: auth0.baseUrl + '/users'
     },
@@ -242,8 +242,8 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
               
                 // Updated user.
                 context.primaryUser = decodedToken.sub;
-                if (decodedUser.app_metadata && decodedUser.app_metadata.gcn){
-                  user.app_metadata.gcn = decodedUser.app_metadata.gcn;
+                if (user.app_metadata && user.app_metadata.gcn){
+                  user.app_metadata.gcn = user.app_metadata.gcn;
                   management.updateUser({ id: decodedToken.sub }, userPayload, function (err, updatedSmsUser) {
                       if (err) {
                         console.log("err", err);

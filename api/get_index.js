@@ -23,7 +23,7 @@ const decodeToken = token =>
   });
 
 const fetchUsersFromToken = ({ sub, phone_number, email }) =>
-  findUsersByPhoneAndEmail(phone_number, email).then(users => ({
+  findUsersByEmail(phone_number, email).then(users => ({
     currentUser: users.find(u => u.user_id === sub),
     matchingUsers: users.filter(u => u.user_id !== sub)
   }));
