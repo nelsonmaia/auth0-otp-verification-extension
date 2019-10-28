@@ -1,89 +1,54 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title>Sign In</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
-
-<body>
-  <!--[if IE 8]>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Sign In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!--[if IE 8]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.5/ie8.js"></script>
     <![endif]-->
 
-  <!--[if lte IE 9]>
+    <!--[if lte IE 9]>
       <script src="https://cdn.auth0.com/js/base64.js"></script>
       <script src="https://cdn.auth0.com/js/es5-shim.min.js"></script>
     <![endif]-->
 
-  <script src="https://cdn.auth0.com/js/lock/11.17/lock.min.js"></script>
-  <script>
-    // Decode utf8 characters properly
-    var config = JSON.parse(
-      decodeURIComponent(escape(window.atob("@@config@@")))
-    );
-    config.extraParams = config.extraParams || {};
-    var connection = config.connection;
-    var prompt = config.prompt;
-    var languageDictionary;
-    var language;
+    <script src="https://cdn.auth0.com/js/lock/11.17/lock.min.js"></script>
+    <script>
+      // Decode utf8 characters properly
+      var config = JSON.parse(
+        decodeURIComponent(escape(window.atob("@@config@@")))
+      );
+      config.extraParams = config.extraParams || {};
+      var connection = config.connection;
+      var prompt = config.prompt;
+      var languageDictionary;
+      var language;
 
-    if (config.dict && config.dict.signin && config.dict.signin.title) {
-      languageDictionary = { title: config.dict.signin.title };
-    } else if (typeof config.dict === "string") {
-      language = config.dict;
-    }
+      if (config.dict && config.dict.signin && config.dict.signin.title) {
+        languageDictionary = { title: config.dict.signin.title };
+      } else if (typeof config.dict === "string") {
+        language = config.dict;
+      }
 
-    languageDictionary.passwordlessSMSInstructions = "Enter your phone";
-    var loginHint = config.extraParams.login_hint;
-    var colors = config.colors || {};
+      languageDictionary.passwordlessSMSInstructions = "Enter your phone";
+      var loginHint = config.extraParams.login_hint;
+      var colors = config.colors || {};
 
-    var login_phone = config.extraParams.login_number;
-    var phonePrefill;
-    console.log("login phone", login_phone);
-    if (login_phone) {
-      phonePrefill = {
-        phoneNumber: login_phone
-      };
-    }
+      var login_phone = config.extraParams.login_humber;
+      var phonePrefill;
+      console.log("login phone", login_phone);
+      if (login_phone) {
+        phonePrefill = {
+          phoneNumber: login_phone
+        };
+      }
 
-    // Available Lock configuration options: https://auth0.com/docs/libraries/lock/v11/configuration
-    var lock = new Auth0Lock(config.clientID, config.auth0Domain, {
-      auth: {
-        redirectUrl: config.callbackURL,
-        responseType:
-          (config.internalOptions || {}).response_type ||
-          (config.callbackOnLocationHash ? "token" : "code"),
-        params: config.internalOptions
-      },
-      /* additional configuration needed for custom domains
-    configurationBaseUrl: config.clientConfigurationBaseUrl,
-    overrides: {
-      __tenant: config.auth0Tenant,
-      __token_issuer: 'YOUR_CUSTOM_DOMAIN'
-    }, */
-      assetsUrl: config.assetsUrl,
-      allowedConnections: connection ? [connection] : null,
-      rememberLastLogin: !prompt,
-      language: language,
-      languageDictionary: languageDictionary,
-      theme: {
-        //logo:            'YOUR LOGO HERE',
-        primaryColor: colors.primary ? colors.primary : "green"
-      },
-      prefill: loginHint ? { email: loginHint, username: loginHint } : null,
-      closable: false,
-      defaultADUsernameFromEmailPrefix: false
-      // uncomment if you want small buttons for social providers
-      // socialButtonStyle: 'small'
-    });
-
-    var lockPasswordless = new Auth0LockPasswordless(
-      config.clientID,
-      config.auth0Domain,
-      {
+      // Available Lock configuration options: https://auth0.com/docs/libraries/lock/v11/configuration
+      var lock = new Auth0Lock(config.clientID, config.auth0Domain, {
         auth: {
           redirectUrl: config.callbackURL,
           responseType:
@@ -91,66 +56,98 @@
             (config.callbackOnLocationHash ? "token" : "code"),
           params: config.internalOptions
         },
-        /* additional config needed to use custom domains
-    configurationBaseUrl: config.clientConfigurationBaseUrl,
-    overrides: {
-      __tenant: config.auth0Tenant,
-      __token_issuer: config.auth0Domain
-    }, */
+        /* additional configuration needed for custom domains
+      configurationBaseUrl: config.clientConfigurationBaseUrl,
+      overrides: {
+        __tenant: config.auth0Tenant,
+        __token_issuer: 'YOUR_CUSTOM_DOMAIN'
+      }, */
         assetsUrl: config.assetsUrl,
-
+        allowedConnections: connection ? [connection] : null,
         rememberLastLogin: !prompt,
         language: language,
         languageDictionary: languageDictionary,
         theme: {
           //logo:            'YOUR LOGO HERE',
-          primaryColor: "#000"
+          primaryColor: colors.primary ? colors.primary : "green"
         },
+        prefill: loginHint ? { email: loginHint, username: loginHint } : null,
         closable: false,
-        prefill: phonePrefill,
-        allowedConnections: ["sms"]
+        defaultADUsernameFromEmailPrefix: false
         // uncomment if you want small buttons for social providers
         // socialButtonStyle: 'small'
-      }
-    );
-
-    if (colors.page_background) {
-      var css =
-        ".auth0-lock.auth0-lock .auth0-lock-overlay { background: " +
-        colors.page_background +
-        " }";
-      var style = document.createElement("style");
-
-      style.appendChild(document.createTextNode(css));
-
-      document.body.appendChild(style);
-    }
-
-    if (
-      (connection && connection === "sms") ||
-      (loginHint && loginHint === "sms")
-    ) {
-      lockPasswordless.on("socialOrPhoneNumber ready", function (authResult) {
-        console.log("signin ready", passwordField);
-        var passwordField = document.querySelector("input[type=tel]");
-
-        if (passwordField) {
-          passwordField.disabled = true;
-        }
-
-        var locationField = document.getElementsByName("location")[0];
-        if (locationField) {
-          locationField.disabled = true;
-        }
       });
 
-      console.log(lockPasswordless);
+      var lockPasswordless = new Auth0LockPasswordless(
+        config.clientID,
+        config.auth0Domain,
+        {
+          auth: {
+            redirectUrl: config.callbackURL,
+            responseType:
+              (config.internalOptions || {}).response_type ||
+              (config.callbackOnLocationHash ? "token" : "code"),
+            params: config.internalOptions
+          },
+          /* additional config needed to use custom domains
+      configurationBaseUrl: config.clientConfigurationBaseUrl,
+      overrides: {
+  	    __tenant: config.auth0Tenant,
+  	    __token_issuer: config.auth0Domain
+      }, */
+          assetsUrl: config.assetsUrl,
 
-      lockPasswordless.show();
-    } else {
-      lock.show();
-    }
-  </script>
-</body>
+          rememberLastLogin: !prompt,
+          language: language,
+          languageDictionary: languageDictionary,
+          theme: {
+            //logo:            'YOUR LOGO HERE',
+            primaryColor: "#000"
+          },
+          closable: false,
+          prefill: phonePrefill,
+          allowedConnections: ["sms"]
+          // uncomment if you want small buttons for social providers
+          // socialButtonStyle: 'small'
+        }
+      );
 
+      if (colors.page_background) {
+        var css =
+          ".auth0-lock.auth0-lock .auth0-lock-overlay { background: " +
+          colors.page_background +
+          " }";
+        var style = document.createElement("style");
+
+        style.appendChild(document.createTextNode(css));
+
+        document.body.appendChild(style);
+      }
+
+      if (
+        (connection && connection === "sms") ||
+        (loginHint && loginHint === "sms")
+      ) {
+        lockPasswordless.on("socialOrPhoneNumber ready", function(authResult) {
+          console.log("signin ready", passwordField);
+          var passwordField = document.querySelector("input[type=tel]");
+
+          if (passwordField) {
+            passwordField.disabled = true;
+          }
+
+          var locationField = document.getElementsByName("location")[0];
+          if (locationField) {
+            locationField.disabled = true;
+          }
+        });
+
+        console.log(lockPasswordless);
+
+        lockPasswordless.show();
+      } else {
+        lock.show();
+      }
+    </script>
+  </body>
 </html>
