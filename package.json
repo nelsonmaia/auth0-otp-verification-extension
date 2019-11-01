@@ -84,7 +84,7 @@
     "jsonwebtoken": "^8.1.0",
     "jwks-rsa": "1.1.1",
     "nconf": "^0.8.4",
-    "open": "^0.0.5",
+    "open": "^6.0.0",
     "request": "^2.81.0",
     "webtask-tools": "^3.4.1",
     "winston": "1.0.0"
