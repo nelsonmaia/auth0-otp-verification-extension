@@ -47,20 +47,11 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
     return continueAuth();
 
     function shouldLink() {
-      console.log(LOG_TAG, 'Should Link', !!context.request.query.link_account_token);
-      console.log(LOG_TAG, context.request.query.link_account_token);
       return !!context.request.query.link_account_token;
     }
 
     function shouldPrompt() {
-
-      console.log(LOG_TAG, '!insideRedirect()', !insideRedirect());
-      console.log(LOG_TAG, '!redirectingToContinue()', !redirectingToContinue());
-
-
-      var should = !insideRedirect() && !redirectingToContinue();//&& firstLogin();
-      console.log(LOG_TAG, 'Should Prompt', should);
-
+      var should = !insideRedirect() && !redirectingToContinue();
       return should;
 
       // Check if we're inside a redirect
@@ -103,8 +94,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   function linkAccounts() {
     var secondAccountToken = context.request.query.link_account_token;
 
-    console.log("Second account to be link", secondAccountToken);
-
     return verifyToken(secondAccountToken, config.token.clientSecret)
       .then(function (decodedToken) {
 
@@ -121,12 +110,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
         var newApp_metadata = decodedToken.app_metadata || {};
         newApp_metadata.isVerified = true;
 
-        //  auth0.users.updateAppMetadata(decodedToken.sub, newApp_metadata).then(() =>{
-        //   context.primaryUser = decodedToken.sub;
-        //   return _;
-
-        //  });
-
         var ManagementClient = require('auth0@2.9.1').ManagementClient;
         var management = new ManagementClient({
           domain: auth0.domain,
@@ -134,15 +117,11 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
         });
 
         var userPayload = {
-          //   phone_number: user.phone_number,
           app_metadata: newApp_metadata
         };
 
-
-
         return apiCall({
           method: 'GET',
-          //url: config.endpoints.userApi+'/'+decodedToken.sub+'?fields=identities',
           url: config.endpoints.userApi + '/' + user.user_id + '?fields=identities,user_id',
           headers: headers
         })
@@ -152,23 +131,13 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
               secondaryUser.identities[0] &&
               secondaryUser.identities[0].provider;
 
-
-           
-
             // For this case, there is already an identity with username and password  
             if (provider && provider === "auth0") {
 
-
-
               if (secondaryUser.identities && secondaryUser.identities[1] && secondaryUser.identities[1].provider === "sms") {
                 var unlinkUri = config.endpoints.userApi + "/" + user.user_id + "/identities/sms/" + secondaryUser.identities[1].user_id;
-               
-
-                // ontext.primaryUser = secondaryUser.identities[1].user_id;
 
                 var smsUserId = "sms|"+secondaryUser.identities[1].user_id;
-
-
                
                 await apiCall({
                   method: 'DELETE',
@@ -177,50 +146,44 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
 
                 });
 
+                // UPDATE SMS ACCOUNT BEFORE RE-LINK
+                // this is to ensure the second user gets prompted to OTP
+                var updateUserUrl = config.endpoints.userApi + "/" + user.user_id;
+                await apiCall({
+                    method: 'PATCH',
+                    url: updateUserUrl,
+                    headers,
+                    json: {phone_verified: false}
+                  });
+
                 return apiCall({
                   method: 'POST',
                   url: linkUri,
                   headers,
                   json: { user_id: smsUserId, provider: "sms" }
                 });
-
-
-
               }
             }
             else {
-
-              
-
+                // in this case, a previous link has not occured
               return apiCall({
                 method: 'POST',
                 url: linkUri,
                 headers,
                 json: { user_id: user.user_id, provider: provider }
               });
-
             }
-
-
-
-
           })
           .then(
 
             management.updateUser({ id: decodedToken.sub }, userPayload, function (err, user) {
               if (err) {
-                console.log("err", err);
+                console.log(LOG_TAG+ '[ERROR]', err);
                 throw err;
               }
-
-              // Updated user.
-              console.log(decodedToken.sub);
               context.primaryUser = decodedToken.sub;
               return _;
             })
-
-
-
           ).catch(err => {
             throw err;
           });
@@ -232,7 +195,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   }
 
   function isVerifiedUser() {
-    console.log("Is verified user", user.app_metadata);
     if (!user.app_metadata || user.app_metadata.isVerified !== true) {
       return false;
     }
@@ -242,7 +204,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
   function promptUser() {
 
     if (isVerifiedUser()) {
-      console.log("Is verified");
       return Promise.resolve();
     }
 
@@ -261,27 +222,19 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
         };
       });
     }).then(function redirectToExtension(targetUsers) {
-      console.log("target users before function", targetUsers);
-      console.log("context.query", context.request.query);
-      console.log("target users", targetUsers);
-      // if (targetUsers.length > 0) {
       context.redirect = {
-        // url: buildRedirectUrl(createToken(config.token), targetUsers)
         url: buildRedirectUrl(createToken(config.token), context.request.query)
       };
-      // }
     });
   }
 
   function callbackWithSuccess(_) {
-    console.log(LOG_TAG, 'Callback With Success');
     callback(null, user, context);
 
     return _;
   }
 
   function callbackWithFailure(err) {
-    console.log(LOG_TAG, 'Callback with failure');
     console.error(LOG_TAG, err.message, err.stack);
 
     callback(err, user, context);
@@ -304,8 +257,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
       base: auth0.baseUrl,
       phone_number: user.phone_number
     };
-
-    console.log("user sub", userSub);
 
     return jwt.sign(userSub, tokenInfo.clientSecret, options);
   }
@@ -354,8 +305,6 @@ module.exports = ({ extensionURL = '', username = 'Unknown', clientID = '', clie
         },
         json: true
       }, options);
-
-      console.log("options api call", options.url, options);
 
       request(reqOptions, function handleResponse(err, response, body) {
         if (err) {
