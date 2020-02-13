@@ -16,6 +16,7 @@
     "extension",
     "account-link"
   ],
+  "codeUrl": "https://raw.githubusercontent.com/nelsonmaia/auth0-otp-verification-extension/master/index.js",
   "secrets": {
     "CUSTOM_CSS": {
       "description": "Add custom styles to the linking page of the extension.",
