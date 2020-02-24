@@ -22,8 +22,6 @@ module.exports = ({
     .then(([widget, data]) => {
       const template = data.settings ? data.settings.template : defaultTemplate;
 
-      console.log("it is inside template promise");
-
       currentUser.user_metadata = currentUser.user_metadata || {};
       currentUser.user_metadata.mobileNumber = currentUser.user_metadata.mobileNumber || "";
 
@@ -37,7 +35,7 @@ module.exports = ({
         );
 
         var formattedNumber = phoneUtil
-          .format(number, PNF.NATIONAL)
+          .format(number, PNF.E164)
           .split(" ")
           .join("");
 
