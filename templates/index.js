@@ -32,23 +32,26 @@ module.exports = ({
         const phoneUtil = googlePhone.PhoneNumberUtil.getInstance();
         const PNF = googlePhone.PhoneNumberFormat;
         var number = phoneUtil.parseAndKeepRawInput(
-          currentUser.user_metadata.mobileNumber,
-          "ZA"
+          currentUser.user_metadata.mobileNumber
         );
 
         var formattedNumber = phoneUtil
           .format(number, PNF.NATIONAL)
-          .split(" ")
-          .join("");
+          .replace(/[\+\ \-\(\)]/gi, "");
+
+        var regionCode = phoneUtil.getRegionCodeForNumber(number);
 
         console.log(
           "Number format update " +
           currentUser.user_metadata.mobileNumber +
           " to " +
-          formattedNumber
+          formattedNumber +
+          " country " +
+          regionCode
         );
 
         currentUser.user_metadata.mobileNumber = formattedNumber;
+        currentUser.user_metadata.mobileNumberCountry = regionCode;
       }
 
       return render(template, {
