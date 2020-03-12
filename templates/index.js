@@ -31,9 +31,20 @@ module.exports = ({
 
         const phoneUtil = googlePhone.PhoneNumberUtil.getInstance();
         const PNF = googlePhone.PhoneNumberFormat;
-        var number = phoneUtil.parseAndKeepRawInput(
-          currentUser.user_metadata.mobileNumber
-        );
+
+        // number parsing may fail for local numbers as we don't specify a country code
+        // this is a temporary fix that assumes "ZA" for all local phone numbers
+        // the correct long term fix should be either:
+        //  A. Force users to always specify the number in international format
+        //  B. Ask user to input the country separately and use that when parsing the phone number
+        let number = null;
+        const rawNumber = currentUser.user_metadata.mobileNumber;
+        try {
+          number = phoneUtil.parseAndKeepRawInput(rawNumber);
+        } catch (e) {
+          console.log(`WARN: Phone number without country code: ${rawNumber}`);
+          number = phoneUtil.parseAndKeepRawInput(rawNumber, 'ZA');
+        }
 
         var formattedNumber = phoneUtil
           .format(number, PNF.NATIONAL)
